@@ -1,13 +1,15 @@
-from flask import Flask,request, send_from_directory
-from flask import render_template
+from flask import Flask
 from flask import jsonify
+from flask import render_template
+from flask import request
+from flask import send_from_directory
 from flask.ext.cors import CORS
 
 
 app = Flask(__name__)
 CORS(app)
 
-registroAlunni = {0:{"numeroReg":0,"nome":"ignoto","cognome":"ignoto","annoNascita":"1900"}}
+registroAlunni = {0:{"numeroReg":0, "nome":"ignoto", "cognome":"ignoto", "annoNascita":"1900"}}
 
 @app.route("/")
 def hello():
@@ -28,13 +30,13 @@ def cssLoad(nomeFileCss):
 @app.route("/insertAlunno/")  # metodo GET per chiamare dalla barra del browser
 def inserisciAlunno ():
     # spedizione in formato html
-    numeroReg =  request.args.get('numeroReg')
-    nome =       request.args.get('nome')
-    cognome =    request.args.get('cognome')
-    annoNascita =request.args.get('annoNascita') 
-    dizAlunno = { "numeroReg": numeroReg, "nome": nome,
-                  ":cognome" : cognome , "annoNascita":annoNascita}
-    registroAlunni[int(numeroReg)]= dizAlunno
+    numeroReg = request.args.get('numeroReg')
+    nome = request.args.get('nome')
+    cognome = request.args.get('cognome')
+    annoNascita = request.args.get('annoNascita') 
+    dizAlunno = {"numeroReg": numeroReg, "nome": nome,
+        "cognome": cognome, "annoNascita": annoNascita}
+    registroAlunni[int(numeroReg)] = dizAlunno
     return ""   #restituisce status = 200  OK , ma nessuna stringa
     
     
@@ -42,12 +44,24 @@ def inserisciAlunno ():
 def alunnoByNumeroReg():
     # spedizione in formato html
     
-    numeroReg =  request.json['numeroReg']
+    numeroReg = request.json['numeroReg']
     
     dizAlunno = registroAlunni[int(numeroReg)]
     # in casi piu' complessi usare render_templates e quindi jsonify
-    return jsonify( ** dizAlunno)   #aggiunge content-type => json
+    return jsonify(** dizAlunno)   #aggiunge content-type => json
+    
+@app.route("/insertAlunnoPOST/", methods=["POST"])
+def inserisciAlunnoPOST():
+    numeroReg = request.json['numeroReg']
+    nome = request.json['nome']
+    cognome = request.json['cognome']
+    annoNascita = request.json['annoNascita']
+    dizAlunno = {"numeroReg": numeroReg, "nome": nome, "cognome": cognome, "annoNascita": annoNascita}
+    registroAlunni[int(numeroReg)] = dizAlunno
+    return ""
     
 if __name__ == "__main__":
     #app.debug=True
     app.run(port=4000)
+
+
